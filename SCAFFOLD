@@ -1,0 +1,1 @@
+dotnet ef dbcontext scaffold Name=Pmondb Pomelo.EntityFrameworkCore.MySql -o Domains/Models -f -c CtxPmondb --no-build --use-database-names -t m_user -t m_user_detail

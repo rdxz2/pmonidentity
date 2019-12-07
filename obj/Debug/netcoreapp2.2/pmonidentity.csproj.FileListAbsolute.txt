@@ -1,0 +1,14 @@
+D:\APP\pmonidentity\bin\Debug\netcoreapp2.2\pmonidentity.deps.json
+D:\APP\pmonidentity\bin\Debug\netcoreapp2.2\pmonidentity.runtimeconfig.json
+D:\APP\pmonidentity\bin\Debug\netcoreapp2.2\pmonidentity.runtimeconfig.dev.json
+d:\APP\pmonidentity\bin\Debug\netcoreapp2.2\pmonidentity.dll
+d:\APP\pmonidentity\bin\Debug\netcoreapp2.2\pmonidentity.pdb
+d:\APP\pmonidentity\obj\Debug\netcoreapp2.2\pmonidentity.csprojAssemblyReference.cache
+d:\APP\pmonidentity\obj\Debug\netcoreapp2.2\pmonidentity.csproj.CoreCompileInputs.cache
+d:\APP\pmonidentity\obj\Debug\netcoreapp2.2\pmonidentity.RazorAssemblyInfo.cache
+d:\APP\pmonidentity\obj\Debug\netcoreapp2.2\pmonidentity.RazorAssemblyInfo.cs
+d:\APP\pmonidentity\obj\Debug\netcoreapp2.2\pmonidentity.AssemblyInfoInputs.cache
+d:\APP\pmonidentity\obj\Debug\netcoreapp2.2\pmonidentity.AssemblyInfo.cs
+d:\APP\pmonidentity\obj\Debug\netcoreapp2.2\pmonidentity.RazorTargetAssemblyInfo.cache
+d:\APP\pmonidentity\obj\Debug\netcoreapp2.2\pmonidentity.dll
+d:\APP\pmonidentity\obj\Debug\netcoreapp2.2\pmonidentity.pdb
