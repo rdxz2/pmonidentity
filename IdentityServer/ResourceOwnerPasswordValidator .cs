@@ -1,4 +1,5 @@
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityModel;
@@ -6,26 +7,31 @@ using IdentityServer4.Models;
 using IdentityServer4.Validation;
 using pmonidentity.Domains.Models;
 using pmonidentity.Domains.Repositories;
+using pmonidentity.Domains.Utilities;
 using Serilog;
 
 namespace pmonidentity.IdentityServer {
 	public class ResourceOwnerPasswordValidator : IResourceOwnerPasswordValidator {
-		//repository to get user from db
 		private readonly IRepoMUser _repoMUser;
+		private readonly IUtlPasswordHasher _utlPasswordHasher;
 
-		public ResourceOwnerPasswordValidator(IRepoMUser repoMUser) {
-			_repoMUser = repoMUser; //DI
+		public ResourceOwnerPasswordValidator(
+			IRepoMUser repoMUser,
+			IUtlPasswordHasher utlPasswordHasher
+			) {
+			_repoMUser = repoMUser;
+			_utlPasswordHasher = utlPasswordHasher;
 		}
 
-		//this is used to validate your user account with provided grant at /connect/token
+		// this is used to validate your user account with provided grant at /connect/token
 		public async Task ValidateAsync(ResourceOwnerPasswordValidationContext input) {
 			try {
-				//get your user model from db (by username - in my case its email)
+				// get your user model from db (by username - in my case its email)
 				var repoMuser = await _repoMUser.GetOne(input.UserName);
 				if (repoMuser != null) {
-					//check if password match - remember to hash password if stored as hash in db
-					if (repoMuser.password == input.Password) {
-						//set the result
+					// check if password match - remember to hash password if stored as hash in db
+					if (_utlPasswordHasher.ValidatePassword(input.Password, repoMuser.password)) {
+						// set the result
 						input.Result = new GrantValidationResult(
 								subject: repoMuser.username.ToString(),
 								authenticationMethod: "custom",
@@ -46,10 +52,11 @@ namespace pmonidentity.IdentityServer {
 			}
 		}
 
-		//build claims array from user data
+		// build claims array from user data
 		public static Claim[] GetUserClaims(m_user_detail repoMUserDetail) {
 			return new Claim[]
 			{
+				new Claim(JwtRegisteredClaimNames.UniqueName, repoMUserDetail.idNavigation.username ?? ""),
 				new Claim(JwtClaimTypes.Name, repoMUserDetail.name ?? ""),
 				new Claim(JwtClaimTypes.Email, repoMUserDetail.email  ?? ""),
 				new Claim(JwtClaimTypes.PhoneNumber, "0815171628347"  ?? ""),

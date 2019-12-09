@@ -3,7 +3,6 @@
 
 
 using System;
-using System.IdentityModel.Tokens.Jwt;
 using IdentityServer4.Services;
 using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Builder;
@@ -13,8 +12,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using pmonidentity.Domains.Models;
 using pmonidentity.Domains.Repositories;
+using pmonidentity.Domains.Services;
+using pmonidentity.Domains.Utilities;
 using pmonidentity.IdentityServer;
 using pmonidentity.Repositories;
+using pmonidentity.Services;
+using pmonidentity.Utilities;
 
 namespace pmonidentity {
 	public class Startup {
@@ -28,26 +31,47 @@ namespace pmonidentity {
 
 		public void ConfigureServices(IServiceCollection services) {
 			// uncomment, if you want to add an MVC-based UI
-			//services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
+			services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_2);
+
+			// register dbcontext
+			services.AddDbContext<CtxPmonDb>(m => m.UseMySql(Configuration.GetConnectionString("PmonDb")));
+
+			// dependency injection for repository
+			services.AddScoped<IRepoMUser, RepoMUser>();
+			services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+			// dependency injection for service
+			services.AddScoped<ISvsRegister, SvsRegister>();
+
+			// dependency injection for utilities
+			services.AddScoped<IUtlPasswordHasher, UtlPasswordHasher>();
+
+			// dependency injection for resource owner password validator implementation of identity server
+			services.AddTransient<IResourceOwnerPasswordValidator, ResourceOwnerPasswordValidator>();
+			services.AddTransient<IProfileService, ProfileService>();
 
 			// cors
 			services.AddCors(o => o.AddPolicy("PmonIdentityCorsPolicy", m => {
 				m
 					.AllowAnyOrigin()
+					// .WithOrigins("http:// localhost:3000")
 					.AllowAnyMethod()
 					.AllowAnyHeader()
-					.AllowCredentials()
+					// .AllowCredentials()
 					.Build();
 			}));
 
-			// jwt
-
-			// identity server
-			var builder = services.AddIdentityServer()
-					.AddInMemoryIdentityResources(Config.GetIdentityResources())
-					.AddInMemoryApiResources(Config.GetApis())
-					.AddInMemoryClients(Config.GetClients())
-					.AddProfileService<ProfileService>();
+			// configure identity server
+			var builder = services.AddIdentityServer(m => {
+				m.Events.RaiseErrorEvents = true;
+				m.Events.RaiseInformationEvents = true;
+				m.Events.RaiseFailureEvents = true;
+				m.Events.RaiseSuccessEvents = true;
+			})
+				.AddInMemoryIdentityResources(Config.GetIdentityResources())
+				.AddInMemoryApiResources(Config.GetApis())
+				.AddInMemoryClients(Config.GetClients())
+				.AddProfileService<ProfileService>();
 
 			if (Environment.IsDevelopment()) {
 				builder.AddDeveloperSigningCredential();
@@ -55,23 +79,9 @@ namespace pmonidentity {
 			else {
 				throw new Exception("need to configure key material");
 			}
-
-			// register dbcontext
-			services.AddDbContext<CtxPmondb>(option => option.UseMySql(Configuration.GetConnectionString("Pmondb")));
-
-			// dependency injection untuk repository
-			services.AddScoped<IRepoMUser, RepoMUser>();
-
-			// dependency injection untuk service
-
-			// dependency injection untuk implementasi autentikasi identity server
-			services.AddTransient<IResourceOwnerPasswordValidator, ResourceOwnerPasswordValidator>();
-			services.AddTransient<IProfileService, ProfileService>();
 		}
 
 		public void Configure(IApplicationBuilder app) {
-			app.UseDefaultFiles();
-			app.UseStaticFiles();
 
 			app.UseCors("PmonIdentityCorsPolicy");
 
@@ -80,14 +90,15 @@ namespace pmonidentity {
 			}
 
 			// uncomment if you want to support static files
-			//app.UseStaticFiles();
+			// app.UseStaticFiles();
+			// app.UseDefaultFiles();
 
 			app.UseIdentityServer();
 
 			// JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 			// uncomment, if you want to add an MVC-based UI
-			//app.UseMvcWithDefaultRoute();
+			app.UseMvcWithDefaultRoute();
 		}
 	}
 }

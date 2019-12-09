@@ -2,10 +2,10 @@ using pmonidentity.Domains.Models;
 
 namespace pmonidentity.Repositories {
 	public abstract class RepoBase {
-		protected readonly CtxPmondb _ctxPmondb;
+		protected readonly CtxPmonDb _ctxPmonDb;
 
-		public RepoBase(CtxPmondb ctxPmondb) {
-			_ctxPmondb = ctxPmondb;
+		public RepoBase(CtxPmonDb ctxPmonDb) {
+			_ctxPmonDb = ctxPmonDb;
 		}
 	}
 }

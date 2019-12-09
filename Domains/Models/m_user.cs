@@ -14,11 +14,11 @@ namespace pmonidentity.Domains.Models
         public int id { get; set; }
         public string username { get; set; }
         public string password { get; set; }
-        public int cb { get; set; }
         public DateTime cd { get; set; }
-        public int? ub { get; set; }
+        public int cb { get; set; }
         public DateTime? ud { get; set; }
-        public bool? active { get; set; }
+        public int? ub { get; set; }
+        public bool active { get; set; }
 
         public virtual m_user cbNavigation { get; set; }
         public virtual m_user ubNavigation { get; set; }

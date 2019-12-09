@@ -18,24 +18,23 @@ namespace pmonidentity {
 
 		public static IEnumerable<ApiResource> GetApis() {
 			return new ApiResource[] {
-				new ApiResource("pmonapi", "Pmon API")
+				// main pmon web api 
+				new ApiResource("pmonapi", "Pmon Web API")
 			 };
 		}
 
 		public static IEnumerable<Client> GetClients() {
 			return new Client[] {
+				// main pmon webapp (reactjs)
 				new Client{
 					ClientId = "pmon",
-					ClientName = "Pmon Web",
-					AllowedGrantTypes = {
-						GrantType.ClientCredentials,
-						GrantType.ResourceOwnerPassword
-					},
+					ClientName = "Pmon Website",
+					AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+					RequirePkce = true,
 					RequireClientSecret = false,
-					AlwaysIncludeUserClaimsInIdToken = true,
 
-					RedirectUris = { "http://localhost:3000/home" },
-					PostLogoutRedirectUris = { "http://localhost:3000/login" },
+					RedirectUris = {  "http://localhost:3000/#/callback" },
+					PostLogoutRedirectUris = { "http://localhost:3000/#/logout/callback" },
 					AllowedCorsOrigins = { "http://localhost:3000" },
 
 					AllowedScopes = {
