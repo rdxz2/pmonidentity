@@ -8,22 +8,23 @@ using pmonidentity.Domains.Utilities;
 using pmonidentity.InputModels;
 
 namespace pmonidentity.Services {
-	public class SvsRegister : SvsBase, ISvsRegister {
+	public class SvsMUser : SvsBase, ISvsMUser {
 		private readonly IRepoMUser _repoMUser;
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IUtlPasswordHasher _utlPasswordHasher;
 
-		public SvsRegister(
+		public SvsMUser(
 			IRepoMUser repoMUser,
 			IUnitOfWork unitOfWork,
 			IUtlPasswordHasher utlPasswordHasher
-			) {
+		) {
 			_repoMUser = repoMUser;
 			_unitOfWork = unitOfWork;
 			_utlPasswordHasher = utlPasswordHasher;
+
 		}
 
-		public async Task<ResBase> Register(IMRegister input) {
+		public async Task<ResBase> Register(IMMUser.Register input) {
 			var tbiMUser = new m_user {
 				username = input.username,
 				password = _utlPasswordHasher.HashPassword(input.password),
@@ -38,6 +39,32 @@ namespace pmonidentity.Services {
 			try {
 				// insert
 				await _repoMUser.Insert(tbiMUser);
+
+				// commit
+				await _unitOfWork.Commit();
+
+				return new ResBase();
+			}
+			catch (Exception ex) {
+				return new ResBase($"Server errror: {ex.Message}");
+			}
+		}
+
+		public async Task<ResBase> ChangePassword(string username, IMMUser.ChangePassword input) {
+			// get user
+			var tbuMUser = await _repoMUser.GetOne(username);
+			if (tbuMUser == null) return new ResBase($"user {username} not found");
+
+			// validate user's old password
+			if (!_utlPasswordHasher.ValidatePassword(input.oldPassword, tbuMUser.password)) return new ResBase($"old password is incorrect");
+
+			// edit header
+			tbuMUser.password = _utlPasswordHasher.HashPassword(input.newPassword);
+			tbuMUser.md_password = now;
+
+			try {
+				// update user
+				_repoMUser.Update(tbuMUser);
 
 				// commit
 				await _unitOfWork.Commit();

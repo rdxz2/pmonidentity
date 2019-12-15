@@ -4,6 +4,5 @@ using pmonidentity.InputModels;
 
 namespace pmonidentity.Domains.Services {
 	public interface ISvsRegister {
-		Task<ResBase> Register(IMRegister input);
 	}
 }

@@ -33,6 +33,9 @@ namespace pmonidentity {
 					RequirePkce = true,
 					RequireClientSecret = false,
 
+					// token lifetime = 10 hours
+					AccessTokenLifetime = 3600 * 10,
+
 					RedirectUris = {  "http://localhost:3000/#/callback" },
 					PostLogoutRedirectUris = { "http://localhost:3000/#/logout/callback" },
 					AllowedCorsOrigins = { "http://localhost:3000" },

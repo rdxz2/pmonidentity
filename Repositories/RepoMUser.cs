@@ -20,7 +20,12 @@ namespace pmonidentity.Repositories {
 		}
 
 		public async Task Insert(m_user input) {
+			input.is_active = true;
 			await _ctxPmonDb.m_user.AddAsync(input);
+		}
+
+		public void Update(m_user input) {
+			_ctxPmonDb.m_user.Update(input);
 		}
 	}
 }

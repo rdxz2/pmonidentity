@@ -6,5 +6,6 @@ namespace pmonidentity.Domains.Repositories {
 		Task<m_user> GetOne(int id);
 		Task<m_user> GetOne(string username);
 		Task Insert(m_user input);
+		void Update(m_user input);
 	}
 }

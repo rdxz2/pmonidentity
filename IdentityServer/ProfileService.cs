@@ -65,7 +65,7 @@ namespace pmonidentity.IdentityServer {
 					var user = await _repoMUser.GetOne(username.Value);
 
 					if (user != null) {
-						context.IsActive = user.active;
+						context.IsActive = user.is_active;
 					}
 				}
 			}

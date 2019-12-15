@@ -8,7 +8,7 @@ namespace pmonidentity.Utilities {
 		// password hasher
 		public string HashPassword(string input) {
 			var salt = GenerateSalt(16);
-			var bytes = KeyDerivation.Pbkdf2(input, salt, KeyDerivationPrf.HMACSHA512, 10000, 16);
+			var bytes = Hash(input, salt);
 			return $"{Convert.ToBase64String(salt)}:{Convert.ToBase64String(bytes)}";
 		}
 
@@ -17,7 +17,7 @@ namespace pmonidentity.Utilities {
 			try {
 				var parts = fromDb.Split(':');
 				var salt = Convert.FromBase64String(parts[0]);
-				var bytes = KeyDerivation.Pbkdf2(fromUserInput, salt, KeyDerivationPrf.HMACSHA512, 10000, 16);
+				var bytes = Hash(fromUserInput, salt);
 				return parts[1].Equals(Convert.ToBase64String(bytes));
 			}
 			catch {
@@ -33,6 +33,10 @@ namespace pmonidentity.Utilities {
 				random.GetBytes(salt);
 			}
 			return salt;
+		}
+		// hash string with salt
+		private byte[] Hash(string input, byte[] salt) {
+			return KeyDerivation.Pbkdf2(input, salt, KeyDerivationPrf.HMACSHA512, 10000, 16);
 		}
 	}
 }

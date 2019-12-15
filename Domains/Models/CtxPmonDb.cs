@@ -30,42 +30,23 @@ namespace pmonidentity.Domains.Models
         {
             modelBuilder.Entity<m_user>(entity =>
             {
-                entity.HasIndex(e => e.cb)
-                    .HasName("fk_muser_muser_cb");
-
-                entity.HasIndex(e => e.ub)
-                    .HasName("fk_muser_muser_ub");
-
                 entity.Property(e => e.id).HasColumnType("int(11)");
 
-                entity.Property(e => e.active).HasColumnType("bit(1)");
-
-                entity.Property(e => e.cb).HasColumnType("int(11)");
-
                 entity.Property(e => e.cd).HasColumnType("datetime");
+
+                entity.Property(e => e.is_active).HasColumnType("bit(1)");
+
+                entity.Property(e => e.md).HasColumnType("datetime");
+
+                entity.Property(e => e.md_password).HasColumnType("datetime");
 
                 entity.Property(e => e.password)
                     .IsRequired()
                     .HasColumnType("varchar(255)");
 
-                entity.Property(e => e.ub).HasColumnType("int(11)");
-
-                entity.Property(e => e.ud).HasColumnType("datetime");
-
                 entity.Property(e => e.username)
                     .IsRequired()
                     .HasColumnType("varchar(255)");
-
-                entity.HasOne(d => d.cbNavigation)
-                    .WithMany(p => p.InversecbNavigation)
-                    .HasForeignKey(d => d.cb)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_muser_muser_cb");
-
-                entity.HasOne(d => d.ubNavigation)
-                    .WithMany(p => p.InverseubNavigation)
-                    .HasForeignKey(d => d.ub)
-                    .HasConstraintName("fk_muser_muser_ub");
             });
 
             modelBuilder.Entity<m_user_detail>(entity =>
