@@ -3,9 +3,9 @@ using pmonidentity.Domains.Models;
 
 namespace pmonidentity.Domains.Repositories {
 	public interface IRepoMUser {
-		Task<m_user> GetOne(int id);
-		Task<m_user> GetOne(string username);
-		Task Insert(m_user input);
-		void Update(m_user input);
+		Task<user> GetOne(int id);
+		Task<user> GetOne(string username);
+		Task Insert(user input);
+		void Update(user input);
 	}
 }

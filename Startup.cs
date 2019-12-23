@@ -41,7 +41,7 @@ namespace pmonidentity {
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 			// dependency injection for service
-			services.AddScoped<ISvsMUser, SvsMUser>();
+			services.AddScoped<ISvsUser, SvsUser>();
 
 			// dependency injection for utilities
 			services.AddScoped<IUtlPasswordHasher, UtlPasswordHasher>();

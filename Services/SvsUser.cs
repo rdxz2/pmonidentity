@@ -8,12 +8,12 @@ using pmonidentity.Domains.Utilities;
 using pmonidentity.InputModels;
 
 namespace pmonidentity.Services {
-	public class SvsMUser : SvsBase, ISvsMUser {
+	public class SvsUser : SvsBase, ISvsUser {
 		private readonly IRepoMUser _repoMUser;
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IUtlPasswordHasher _utlPasswordHasher;
 
-		public SvsMUser(
+		public SvsUser(
 			IRepoMUser repoMUser,
 			IUnitOfWork unitOfWork,
 			IUtlPasswordHasher utlPasswordHasher
@@ -24,11 +24,11 @@ namespace pmonidentity.Services {
 
 		}
 
-		public async Task<ResBase> Register(IMMUser.Register input) {
-			var tbiMUser = new m_user {
+		public async Task<ResBase> Register(IMUser.Register input) {
+			var tbiMUser = new user {
 				username = input.username,
 				password = _utlPasswordHasher.HashPassword(input.password),
-				m_user_detail = new m_user_detail {
+				user_detail = new user_detail {
 					name = input.name,
 					nik = input.nik,
 					email = input.email,
@@ -50,7 +50,7 @@ namespace pmonidentity.Services {
 			}
 		}
 
-		public async Task<ResBase> ChangePassword(string username, IMMUser.ChangePassword input) {
+		public async Task<ResBase> ChangePassword(string username, IMUser.ChangePassword input) {
 			// get user
 			var tbuMUser = await _repoMUser.GetOne(username);
 			if (tbuMUser == null) return new ResBase($"user {username} not found");

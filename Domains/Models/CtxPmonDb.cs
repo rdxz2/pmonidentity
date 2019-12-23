@@ -15,8 +15,8 @@ namespace pmonidentity.Domains.Models
         {
         }
 
-        public virtual DbSet<m_user> m_user { get; set; }
-        public virtual DbSet<m_user_detail> m_user_detail { get; set; }
+        public virtual DbSet<user> user { get; set; }
+        public virtual DbSet<user_detail> user_detail { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -28,7 +28,7 @@ namespace pmonidentity.Domains.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<m_user>(entity =>
+            modelBuilder.Entity<user>(entity =>
             {
                 entity.Property(e => e.id).HasColumnType("int(11)");
 
@@ -49,13 +49,18 @@ namespace pmonidentity.Domains.Models
                     .HasColumnType("varchar(255)");
             });
 
-            modelBuilder.Entity<m_user_detail>(entity =>
+            modelBuilder.Entity<user_detail>(entity =>
             {
-                entity.Property(e => e.id).HasColumnType("int(11)");
+                entity.HasKey(e => e.id_user)
+                    .HasName("PRIMARY");
+
+                entity.Property(e => e.id_user).HasColumnType("int(11)");
 
                 entity.Property(e => e.email).HasColumnType("varchar(255)");
 
                 entity.Property(e => e.ext).HasColumnType("varchar(255)");
+
+                entity.Property(e => e.image).HasColumnType("varchar(255)");
 
                 entity.Property(e => e.name)
                     .IsRequired()
@@ -63,11 +68,11 @@ namespace pmonidentity.Domains.Models
 
                 entity.Property(e => e.nik).HasColumnType("varchar(255)");
 
-                entity.HasOne(d => d.idNavigation)
-                    .WithOne(p => p.m_user_detail)
-                    .HasForeignKey<m_user_detail>(d => d.id)
+                entity.HasOne(d => d.id_userNavigation)
+                    .WithOne(p => p.user_detail)
+                    .HasForeignKey<user_detail>(d => d.id_user)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_muserdetail_muser_id");
+                    .HasConstraintName("fk_userdetail_user_iduser");
             });
         }
     }

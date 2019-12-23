@@ -7,25 +7,25 @@ namespace pmonidentity.Repositories {
 	public class RepoMUser : RepoBase, IRepoMUser {
 		public RepoMUser(CtxPmonDb ctxPmonDb) : base(ctxPmonDb) { }
 
-		public async Task<m_user> GetOne(int id) {
-			return await _ctxPmonDb.m_user
-				.Include(m => m.m_user_detail)
+		public async Task<user> GetOne(int id) {
+			return await _ctxPmonDb.user
+				.Include(m => m.user_detail)
 				.SingleOrDefaultAsync(m => m.id == id);
 		}
 
-		public async Task<m_user> GetOne(string username) {
-			return await _ctxPmonDb.m_user
-				.Include(m => m.m_user_detail)
+		public async Task<user> GetOne(string username) {
+			return await _ctxPmonDb.user
+				.Include(m => m.user_detail)
 				.SingleOrDefaultAsync(m => m.username == username);
 		}
 
-		public async Task Insert(m_user input) {
+		public async Task Insert(user input) {
 			input.is_active = true;
-			await _ctxPmonDb.m_user.AddAsync(input);
+			await _ctxPmonDb.user.AddAsync(input);
 		}
 
-		public void Update(m_user input) {
-			_ctxPmonDb.m_user.Update(input);
+		public void Update(user input) {
+			_ctxPmonDb.user.Update(input);
 		}
 	}
 }

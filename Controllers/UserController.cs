@@ -8,17 +8,17 @@ using pmonidentity.InputModels;
 namespace pmonidentity {
 	[Route("/[controller]")]
 	[Authorize]
-	public class MUserController : ControllerBase {
-		private readonly ISvsMUser _svsMUser;
+	public class UserController : ControllerBase {
+		private readonly ISvsUser _svsMUser;
 
-		public MUserController(
-			ISvsMUser svsEditUser
+		public UserController(
+			ISvsUser svsEditUser
 		) {
 			_svsMUser = svsEditUser;
 		}
 
 		[HttpPost("register")]
-		public async Task<IActionResult> Register([FromBody] IMMUser.Register input) {
+		public async Task<IActionResult> Register([FromBody] IMUser.Register input) {
 			if (!ModelState.IsValid) return BadRequest(ModelState.GetErrorMessages());
 			var res = await _svsMUser.Register(input);
 			if (!res._rs) return BadRequest(res._rt);
@@ -26,7 +26,7 @@ namespace pmonidentity {
 		}
 
 		[HttpPost("changepassword")]
-		public async Task<IActionResult> ChangePassword([FromBody] IMMUser.ChangePassword input) {
+		public async Task<IActionResult> ChangePassword([FromBody] IMUser.ChangePassword input) {
 			if (!ModelState.IsValid) return BadRequest(ModelState.GetErrorMessages());
 			var res = await _svsMUser.ChangePassword(User.Identity.Name, input);
 			if (!res._rs) return BadRequest(res._rt);

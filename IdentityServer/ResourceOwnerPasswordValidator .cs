@@ -35,7 +35,7 @@ namespace pmonidentity.IdentityServer {
 						input.Result = new GrantValidationResult(
 								subject: repoMuser.username.ToString(),
 								authenticationMethod: "custom",
-								claims: GetUserClaims(repoMuser.m_user_detail));
+								claims: GetUserClaims(repoMuser.user_detail));
 
 						return;
 					}
@@ -53,10 +53,10 @@ namespace pmonidentity.IdentityServer {
 		}
 
 		// build claims array from user data
-		public static Claim[] GetUserClaims(m_user_detail repoMUserDetail) {
+		public static Claim[] GetUserClaims(user_detail repoMUserDetail) {
 			return new Claim[]
 			{
-				new Claim(JwtRegisteredClaimNames.UniqueName, repoMUserDetail.idNavigation.username ?? ""),
+				new Claim(JwtRegisteredClaimNames.UniqueName, repoMUserDetail.id_userNavigation.username ?? ""),
 				new Claim(JwtClaimTypes.Name, repoMUserDetail.name ?? ""),
 				new Claim(JwtClaimTypes.Email, repoMUserDetail.email  ?? ""),
 				new Claim(JwtClaimTypes.PhoneNumber, "0815171628347"  ?? ""),

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace pmonidentity.InputModels {
-	public class IMMUser {
+	public class IMUser {
 		public class Edit {
 			[Required(ErrorMessage = "name is required")] public string name { get; set; }
 			[Required(ErrorMessage = "worker identity number is required")] public string nik { get; set; }

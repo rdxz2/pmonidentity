@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace pmonidentity.Domains.Models
 {
-    public partial class m_user
+    public partial class user
     {
         public int id { get; set; }
         public string username { get; set; }
@@ -13,6 +13,6 @@ namespace pmonidentity.Domains.Models
         public DateTime? md_password { get; set; }
         public bool is_active { get; set; }
 
-        public virtual m_user_detail m_user_detail { get; set; }
+        public virtual user_detail user_detail { get; set; }
     }
 }

@@ -25,7 +25,7 @@ namespace pmonidentity.IdentityServer {
 					var repoMUser = await _repoMUser.GetOne(context.Subject.Identity.Name);
 
 					if (repoMUser != null) {
-						var claims = ResourceOwnerPasswordValidator.GetUserClaims(repoMUser.m_user_detail);
+						var claims = ResourceOwnerPasswordValidator.GetUserClaims(repoMUser.user_detail);
 
 						// set issued claims to return
 						context.IssuedClaims = claims.Where(x => context.RequestedClaimTypes.Contains(x.Type)).ToList();
@@ -42,7 +42,7 @@ namespace pmonidentity.IdentityServer {
 
 						// issue the claims for the user
 						if (repoMUser != null) {
-							var claims = ResourceOwnerPasswordValidator.GetUserClaims(repoMUser.m_user_detail);
+							var claims = ResourceOwnerPasswordValidator.GetUserClaims(repoMUser.user_detail);
 
 							context.IssuedClaims = claims.ToList();
 							// context.IssuedClaims = claims.Where(x => context.RequestedClaimTypes.Contains(x.Type)).ToList();
