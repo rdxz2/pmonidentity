@@ -66,6 +66,10 @@ namespace pmonidentity.Domains.Models
                     .IsRequired()
                     .HasColumnType("varchar(255)");
 
+                entity.Property(e => e.name_shorthand)
+                    .IsRequired()
+                    .HasColumnType("varchar(2)");
+
                 entity.Property(e => e.nik).HasColumnType("varchar(255)");
 
                 entity.HasOne(d => d.id_userNavigation)

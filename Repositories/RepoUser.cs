@@ -4,8 +4,8 @@ using pmonidentity.Domains.Models;
 using pmonidentity.Domains.Repositories;
 
 namespace pmonidentity.Repositories {
-	public class RepoMUser : RepoBase, IRepoMUser {
-		public RepoMUser(CtxPmonDb ctxPmonDb) : base(ctxPmonDb) { }
+	public class RepoUser : RepoBase, IRepoUser {
+		public RepoUser(CtxPmonDb ctxPmonDb) : base(ctxPmonDb) { }
 
 		public async Task<user> GetOne(int id) {
 			return await _ctxPmonDb.user

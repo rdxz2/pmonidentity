@@ -10,10 +10,10 @@ using Serilog;
 namespace pmonidentity.IdentityServer {
 	public class ProfileService : IProfileService {
 		// services
-		private readonly IRepoMUser _repoMUser;
+		private readonly IRepoUser _repoUser;
 
-		public ProfileService(IRepoMUser repoMUser) {
-			_repoMUser = repoMUser;
+		public ProfileService(IRepoUser repoUser) {
+			_repoUser = repoUser;
 		}
 
 		// Get user profile date in terms of claims when calling /connect/userinfo
@@ -22,10 +22,10 @@ namespace pmonidentity.IdentityServer {
 				// depending on the scope accessing the user data.
 				if (!string.IsNullOrEmpty(context.Subject.Identity.Name)) {
 					// get user from db (in my case this is by email)
-					var repoMUser = await _repoMUser.GetOne(context.Subject.Identity.Name);
+					var repoUser = await _repoUser.GetOne(context.Subject.Identity.Name);
 
-					if (repoMUser != null) {
-						var claims = ResourceOwnerPasswordValidator.GetUserClaims(repoMUser.user_detail);
+					if (repoUser != null) {
+						var claims = ResourceOwnerPasswordValidator.GetUserClaims(repoUser.user_detail);
 
 						// set issued claims to return
 						context.IssuedClaims = claims.Where(x => context.RequestedClaimTypes.Contains(x.Type)).ToList();
@@ -38,11 +38,11 @@ namespace pmonidentity.IdentityServer {
 
 					if (username.Value.HasValue()) {
 						// get user from db (find user by user id)
-						var repoMUser = await _repoMUser.GetOne(username.Value);
+						var repoUser = await _repoUser.GetOne(username.Value);
 
 						// issue the claims for the user
-						if (repoMUser != null) {
-							var claims = ResourceOwnerPasswordValidator.GetUserClaims(repoMUser.user_detail);
+						if (repoUser != null) {
+							var claims = ResourceOwnerPasswordValidator.GetUserClaims(repoUser.user_detail);
 
 							context.IssuedClaims = claims.ToList();
 							// context.IssuedClaims = claims.Where(x => context.RequestedClaimTypes.Contains(x.Type)).ToList();
@@ -62,7 +62,7 @@ namespace pmonidentity.IdentityServer {
 				var username = context.Subject.Claims.FirstOrDefault(m => m.Type == "sub");
 
 				if (username.Value.HasValue()) {
-					var user = await _repoMUser.GetOne(username.Value);
+					var user = await _repoUser.GetOne(username.Value);
 
 					if (user != null) {
 						context.IsActive = user.is_active;

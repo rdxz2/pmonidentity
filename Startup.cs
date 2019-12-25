@@ -37,7 +37,7 @@ namespace pmonidentity {
 			services.AddDbContext<CtxPmonDb>(m => m.UseMySql(Configuration.GetConnectionString("PmonDb")));
 
 			// dependency injection for repository
-			services.AddScoped<IRepoMUser, RepoMUser>();
+			services.AddScoped<IRepoUser, RepoUser>();
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 			// dependency injection for service

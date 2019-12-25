@@ -12,14 +12,14 @@ using Serilog;
 
 namespace pmonidentity.IdentityServer {
 	public class ResourceOwnerPasswordValidator : IResourceOwnerPasswordValidator {
-		private readonly IRepoMUser _repoMUser;
+		private readonly IRepoUser _repoUser;
 		private readonly IUtlPasswordHasher _utlPasswordHasher;
 
 		public ResourceOwnerPasswordValidator(
-			IRepoMUser repoMUser,
+			IRepoUser repoUser,
 			IUtlPasswordHasher utlPasswordHasher
 			) {
-			_repoMUser = repoMUser;
+			_repoUser = repoUser;
 			_utlPasswordHasher = utlPasswordHasher;
 		}
 
@@ -27,15 +27,15 @@ namespace pmonidentity.IdentityServer {
 		public async Task ValidateAsync(ResourceOwnerPasswordValidationContext input) {
 			try {
 				// get your user model from db (by username - in my case its email)
-				var repoMuser = await _repoMUser.GetOne(input.UserName);
-				if (repoMuser != null) {
+				var repoUser = await _repoUser.GetOne(input.UserName);
+				if (repoUser != null) {
 					// check if password match - remember to hash password if stored as hash in db
-					if (_utlPasswordHasher.ValidatePassword(input.Password, repoMuser.password)) {
+					if (_utlPasswordHasher.ValidatePassword(input.Password, repoUser.password)) {
 						// set the result
 						input.Result = new GrantValidationResult(
-								subject: repoMuser.username.ToString(),
+								subject: repoUser.username.ToString(),
 								authenticationMethod: "custom",
-								claims: GetUserClaims(repoMuser.user_detail));
+								claims: GetUserClaims(repoUser.user_detail));
 
 						return;
 					}
@@ -53,17 +53,18 @@ namespace pmonidentity.IdentityServer {
 		}
 
 		// build claims array from user data
-		public static Claim[] GetUserClaims(user_detail repoMUserDetail) {
+		public static Claim[] GetUserClaims(user_detail repoUserDetail) {
 			return new Claim[]
 			{
-				new Claim(JwtRegisteredClaimNames.UniqueName, repoMUserDetail.id_userNavigation.username ?? ""),
-				new Claim(JwtClaimTypes.Name, repoMUserDetail.name ?? ""),
-				new Claim(JwtClaimTypes.Email, repoMUserDetail.email  ?? ""),
-				new Claim(JwtClaimTypes.PhoneNumber, "0815171628347"  ?? ""),
-				new Claim("ext", repoMUserDetail.ext ?? ""),
-				new Claim("warehouse", "WAREHOUSE"),
-				new Claim("branch", "BRANCH"),
-				new Claim("unit", "UNIT")
+				new Claim(JwtRegisteredClaimNames.UniqueName, repoUserDetail.id_userNavigation.username ?? ""),
+				// new Claim(JwtClaimTypes.Name, repoUserDetail.name ?? ""),
+				new Claim("nameShorthand", repoUserDetail.name_shorthand),
+				// new Claim(JwtClaimTypes.Email, repoUserDetail.email  ?? ""),
+				// new Claim(JwtClaimTypes.PhoneNumber, "0815171628347"  ?? ""),
+				// new Claim("ext", repoUserDetail.ext ?? ""),
+				// new Claim("warehouse", "WAREHOUSE"),
+				// new Claim("branch", "BRANCH"),
+				// new Claim("unit", "UNIT")
 			};
 		}
 	}

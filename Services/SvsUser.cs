@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using pmonidentity.Domains.Models;
 using pmonidentity.Domains.Repositories;
@@ -9,27 +11,34 @@ using pmonidentity.InputModels;
 
 namespace pmonidentity.Services {
 	public class SvsUser : SvsBase, ISvsUser {
-		private readonly IRepoMUser _repoMUser;
+		private readonly IRepoUser _repoUser;
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IUtlPasswordHasher _utlPasswordHasher;
 
 		public SvsUser(
-			IRepoMUser repoMUser,
+			IRepoUser repoUser,
 			IUnitOfWork unitOfWork,
 			IUtlPasswordHasher utlPasswordHasher
 		) {
-			_repoMUser = repoMUser;
+			_repoUser = repoUser;
 			_unitOfWork = unitOfWork;
 			_utlPasswordHasher = utlPasswordHasher;
 
 		}
 
 		public async Task<ResBase> Register(IMUser.Register input) {
-			var tbiMUser = new user {
+			// generate shorthand for user's name
+			IEnumerable<string> nameInitials = input.name.Split(' ').Select(m => m.Substring(0, 1));
+			string nameShorthand = string.Join("", nameInitials);
+			// limit to 2 characters only
+			string nameShorthandLimited = nameShorthand.Substring(0, Math.Min(2, nameShorthand.Length));
+
+			var tbiUser = new user {
 				username = input.username,
 				password = _utlPasswordHasher.HashPassword(input.password),
 				user_detail = new user_detail {
 					name = input.name,
+					name_shorthand = nameShorthandLimited,
 					nik = input.nik,
 					email = input.email,
 					ext = input.ext
@@ -38,7 +47,7 @@ namespace pmonidentity.Services {
 
 			try {
 				// insert
-				await _repoMUser.Insert(tbiMUser);
+				await _repoUser.Insert(tbiUser);
 
 				// commit
 				await _unitOfWork.Commit();
@@ -52,19 +61,19 @@ namespace pmonidentity.Services {
 
 		public async Task<ResBase> ChangePassword(string username, IMUser.ChangePassword input) {
 			// get user
-			var tbuMUser = await _repoMUser.GetOne(username);
-			if (tbuMUser == null) return new ResBase($"user {username} not found");
+			var tbuUser = await _repoUser.GetOne(username);
+			if (tbuUser == null) return new ResBase($"user {username} not found");
 
 			// validate user's old password
-			if (!_utlPasswordHasher.ValidatePassword(input.oldPassword, tbuMUser.password)) return new ResBase($"old password is incorrect");
+			if (!_utlPasswordHasher.ValidatePassword(input.oldPassword, tbuUser.password)) return new ResBase($"old password is incorrect");
 
 			// edit header
-			tbuMUser.password = _utlPasswordHasher.HashPassword(input.newPassword);
-			tbuMUser.md_password = now;
+			tbuUser.password = _utlPasswordHasher.HashPassword(input.newPassword);
+			tbuUser.md_password = now;
 
 			try {
 				// update user
-				_repoMUser.Update(tbuMUser);
+				_repoUser.Update(tbuUser);
 
 				// commit
 				await _unitOfWork.Commit();

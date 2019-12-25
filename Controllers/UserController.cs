@@ -9,18 +9,19 @@ namespace pmonidentity {
 	[Route("/[controller]")]
 	[Authorize]
 	public class UserController : ControllerBase {
-		private readonly ISvsUser _svsMUser;
+		private readonly ISvsUser _svsUser;
 
 		public UserController(
 			ISvsUser svsEditUser
 		) {
-			_svsMUser = svsEditUser;
+			_svsUser = svsEditUser;
 		}
 
 		[HttpPost("register")]
+		[AllowAnonymous]
 		public async Task<IActionResult> Register([FromBody] IMUser.Register input) {
 			if (!ModelState.IsValid) return BadRequest(ModelState.GetErrorMessages());
-			var res = await _svsMUser.Register(input);
+			var res = await _svsUser.Register(input);
 			if (!res._rs) return BadRequest(res._rt);
 			return Ok(res._rt);
 		}
@@ -28,7 +29,7 @@ namespace pmonidentity {
 		[HttpPost("changepassword")]
 		public async Task<IActionResult> ChangePassword([FromBody] IMUser.ChangePassword input) {
 			if (!ModelState.IsValid) return BadRequest(ModelState.GetErrorMessages());
-			var res = await _svsMUser.ChangePassword(User.Identity.Name, input);
+			var res = await _svsUser.ChangePassword(User.Identity.Name, input);
 			if (!res._rs) return BadRequest(res._rt);
 			return Ok(res._rt);
 		}
